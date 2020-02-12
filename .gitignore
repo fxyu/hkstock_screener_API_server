@@ -1,0 +1,6 @@
+.cache
+.local
+.vscode-server
+.bash_history
+
+.python_history
