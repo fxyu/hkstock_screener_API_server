@@ -1,0 +1,8 @@
+[user]
+	name = BuildTools
+	email = unconfigured@null.spigotmc.org
+[core]
+	editor = \"C:\\Users\\catlab-home\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe\" --wait
+
+[credential]
+	helper = "!f() { node /tmp/vscode-remote-containers-9db7d62513eaa7d29ce07260962155b368bcb195.js $*; }; f"

@@ -20,6 +20,5 @@ urlpatterns = [
     # REST FRAMEWORK URLS
     path('api/stock/', include('myapi.urls', 'stock_api')),
 
-
     # path('admin/', admin.site.urls),
 ]

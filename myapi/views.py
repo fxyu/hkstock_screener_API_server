@@ -41,7 +41,9 @@ def api_stock_data_all(request, stock_no, start_date, end_date):
             {"$group": {  "_id": "null",  "k_data": {  "$push": "$k_data"  }   }},
             {"$project": {"k_data": 1, "_id": 0}},
             ])
+            
         df_list = list(db_result)
+        # TODO: handle np.nan problem
         # pprint(df_list)
         # df = pd.DataFrame(list(db_result)[0]['k_data']) 
         if request.method == "GET":
@@ -52,7 +54,28 @@ def api_stock_data_all(request, stock_no, start_date, end_date):
         print("Unexpected error:", sys.exc_info()[0])
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    
-    
+
+
+@api_view(['GET',])
+def api_get_all_symbol(request)
+    try:
+        stock_collection = db.client()['hk-stock-db']['stock']
+
+        db_result = stock_collection.aggregate([
+            {"$group":{
+                "_id": { "symbol" : "$symbol" },
+                "symbol" : {"$first" : "$symbol" }
+            }},
+            {"$group": {  "_id": "null",  "symbol": {  "$push": "$symbol"  }   }},
+            {"$project":{"_id" : 0}},
+        ])
+
+        df_list = list(db_result)
+
+        if request.method == "GET":
+            return Response(df_list)
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     
