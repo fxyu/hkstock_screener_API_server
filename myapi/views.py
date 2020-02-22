@@ -14,6 +14,7 @@ import pickle
 import base64
 import sys
 import json
+import pdb
 
 from .rules import getSMACrossUp, getPriceCrossUp
 
@@ -46,22 +47,10 @@ def api_get_all_symbol(request):
 def api_check_rule_all(request, rule_no, start_date, end_date):
     try:
         # Get the symbol list from database
-        stock_collection = db.client()['hk-stock-db']['stock']
-
-        db_result = stock_collection.aggregate([
-            {"$group":{
-                    "_id": {"symbol" : "$symbol"},
-                    "symbol": {"$first" : "$symbol"}}
-            },
-            {"$group":{
-                    "_id": "null",
-                    "symbol": {"$push" : "$symbol"}}
-            },
-            {"$project":{"_id" : 0}},
-        ])
+        db_result = db_get_all_symbol()
 
         #df_stock_list = list(db_result)
-        df_stock_list = pd.DataFrame(list(db_result)[0])
+        df_stock_list = pd.DataFrame(db_result[0])
         df_stock_list = df_stock_list.sort_values('symbol')
         arr_stock_list = df_stock_list['symbol'].values
 
@@ -69,31 +58,13 @@ def api_check_rule_all(request, rule_no, start_date, end_date):
         # for demo, the first 20 stocks, otherwise, it is too slow.
         for i_stock_no in arr_stock_list[0:20]:
             #print(i_stock_no)
-            db_result = stock_collection.aggregate([
-                {"$match": {"symbol":i_stock_no}},
-                {"$match": {"k_data.Date" : { 
-                            "$gt": dt.datetime.strptime(start_date, "%Y%m%d"), 
-                            "$lt": dt.datetime.strptime(end_date, "%Y%m%d")
-                        }}
-                },
-                {"$project":{ "k_data": {"$filter": {
-                    "input": '$k_data',
-                    "as": 'kdata',
-                    "cond": {"$and": [{"$gt": ['$$kdata.Date', dt.datetime.strptime(start_date, "%Y%m%d")]},
-                                    {"$lt": ['$$kdata.Date', dt.datetime.strptime(end_date, "%Y%m%d")]}
-                            ]}}},
-                    "_id": 0
-                }},
-                {"$unwind": "$k_data"},
-                {"$sort" : {  "k_data.Date" : 1  }  },
-                {"$group": {  "_id": "null",  "k_data": {  "$push": "$k_data"  }   }},
-                {"$project": {"k_data": 1, "_id": 0}},
-                ])
+
+            db_result = db_get_data_by_symbol(i_stock_no,start_date,end_date)
 
             # dataframe of a particular stock
-            df = list(db_result)
+            df = db_result
             if df:
-                df_list = pd.DataFrame(df[0]['k_data'])
+                df_list = pd.DataFrame(df)
                 if bFirstStock == True:
                     all_results = df_list.copy()
                     all_results.drop(all_results.index, inplace=True)
