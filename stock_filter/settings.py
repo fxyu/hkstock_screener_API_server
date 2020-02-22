@@ -8,6 +8,9 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
+
+Django CORS header problem, see
+https://github.com/adamchainz/django-cors-headers
 """
 
 import os
@@ -26,7 +29,7 @@ SECRET_KEY = 'mp%$no^tz_v7n#kp-za^6d2p$%1xv6cc6nyu+sj3j8o5_dj=(6'
 DEBUG = True
 
 #ALLOWED_HOSTS = ["catlabhome.synology.me"]
-ALLOWED_HOSTS = ["catlabhome.synology.me", "127.0.0.1"]
+ALLOWED_HOSTS = ["catlabhome.synology.me", "127.0.0.1", "localhost"]
 
 # Application definition
 
