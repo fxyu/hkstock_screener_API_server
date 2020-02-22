@@ -25,8 +25,8 @@ SECRET_KEY = 'mp%$no^tz_v7n#kp-za^6d2p$%1xv6cc6nyu+sj3j8o5_dj=(6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["catlabhome.synology.me"]
-
+#ALLOWED_HOSTS = ["catlabhome.synology.me"]
+ALLOWED_HOSTS = ["catlabhome.synology.me", "127.0.0.1"]
 
 # Application definition
 
