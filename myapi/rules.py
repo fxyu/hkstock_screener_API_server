@@ -83,7 +83,7 @@ def getPriceCrossDown(df, sma='SMA10', date=dt.datetime.today().strftime("%Y-%m-
  
 # find the trigger point when RSI is above 'th_rsi'
 def getRSIabove(df, th_rsi=70, date=dt.datetime.today().strftime("%Y-%m-%d")):
-    rsi = df['RSI']
+    rsi = df['RSI14']
  
     rule = (rsi > th_rsi) & (rsi.shift() < th_rsi)
  
