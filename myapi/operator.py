@@ -18,7 +18,7 @@ def get_check_rule_results_all(arr_symbol_list, rule_no, start_date, end_date, c
     # for initialization
     b_first_stock = True
 
-    for i_stock_no in arr_symbol_list[:20]:
+    for i_stock_no in arr_symbol_list:
         # print(i_stock_no)
         db_result = db_get_data_by_symbol(i_stock_no, start_date, end_date)
 
