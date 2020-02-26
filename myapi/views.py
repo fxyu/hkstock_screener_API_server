@@ -119,3 +119,18 @@ def api_get_stock_score(request, stock_no, start_date, end_date):
         print("Unexpected error:", sys.exc_info()[0])
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+
+@api_view(['GET',])
+def api_check_multiple_rules(request, stock_no, start_date, end_date, rule_no):
+    try:
+        # check whether <stock_no> fulfill multiple rules <rule_no> from <start_date> to <end_date>
+        arr_rule_no = rule_no.split('-')
+        js_results = check_multiple_rules(stock_no, start_date, end_date, arr_rule_no)
+
+        if request.method == "GET":
+            return Response(js_results)
+
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        return Response(status=status.HTTP_404_NOT_FOUND)
+

@@ -233,3 +233,98 @@ def getPriceBelowBBlowerband(df, date=dt.datetime.today().strftime("%Y-%m-%d")):
  
 # add a new column with same value
 #df['Symbol'] = '1211.HK'
+
+"""
+    Functions below are simple comparing functions not cross-up/down strategies 
+"""
+
+# price is above sma
+def priceAboveSMA(df, sma='SMA10', date=dt.datetime.today().strftime("%Y-%m-%d")):
+    adj_close = df['Adj Close']
+    sma = df[sma]
+ 
+    rule = (adj_close > sma)
+ 
+    results_df = df.loc[rule]
+    today_result = results_df.loc[results_df['Date'] == date]
+ 
+    if today_result.empty == False:
+        b_flag = True
+    else:
+        b_flag = False
+ 
+    return results_df, b_flag
+
+
+# macd histogram is equal to or larger than 0
+def macdHistAbove0(df, date=dt.datetime.today().strftime("%Y-%m-%d")):
+    macdHist = df['MACDhist']
+ 
+    rule = (macdHist > 0)
+ 
+    results_df = df.loc[rule]
+    today_result = results_df.loc[results_df['Date'] == date]
+ 
+    if today_result.empty == False:
+        b_flag = True
+    else:
+        b_flag = False
+ 
+    return results_df, b_flag
+
+
+# RSI is below 'th_rsi'
+# e.g. RSI < 80
+def rsiBelow(df, th_rsi=80, date=dt.datetime.today().strftime("%Y-%m-%d")):
+    rsi = df['RSI14']
+ 
+    rule = (rsi < th_rsi)
+ 
+    results_df = df.loc[rule]
+    today_result = results_df.loc[results_df['Date'] == date]
+ 
+    if today_result.empty == False:
+        b_flag = True
+    else:
+        b_flag = False
+ 
+    return results_df, b_flag
+
+
+# sma10 > sma20 
+# sma10 > sma50, etc.
+def smaAbove(df, former='SMA10', latter='SMA20', date=dt.datetime.today().strftime("%Y-%m-%d")):
+    former_sma = df[former]
+    latter_sma = df[latter]
+ 
+    rule = (former_sma > latter_sma)
+ 
+    results_df = df.loc[rule]
+    today_result = results_df.loc[results_df['Date'] == date]
+ 
+    if today_result.empty == False:
+        b_flag = True
+    else:
+        b_flag = False
+ 
+    return results_df, b_flag
+
+
+# Slow %K is above Slow %D 
+def slowkAboveSlowd(df, date=dt.datetime.today().strftime("%Y-%m-%d")):
+    slowk = df['Slowk']
+    slowd = df['Slowd']
+ 
+    rule = (slowk > slowd)
+ 
+    results_df = df.loc[rule]
+    today_result = results_df.loc[results_df['Date'] == date]
+ 
+    if today_result.empty == False:
+        b_flag = True
+    else:
+        b_flag = False
+ 
+    return results_df, b_flag
+
+    
