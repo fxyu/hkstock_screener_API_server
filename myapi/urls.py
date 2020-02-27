@@ -54,7 +54,7 @@ urlpatterns = [
     path('<str:stock_no>/<str:check_date>/rule/<int:rule_no>/on_date/', api_check_rule_on_date, name='check_rule_on_date'),
 
     # get scores of <stock_no> of each day from <start_date> to <end_date>
-    # As currenlty we have 18 rules, max. score is 18.0, score ranges from 0.0 to 18.0
+    # As currenlty we have 19 rules, max. score is 18.0, score ranges from 0.0 to 19.0
     path('<str:stock_no>/<str:start_date>/<str:end_date>/score/', api_get_stock_score, name='get_stock_score'),
 
     # check multiple rules 

@@ -17,6 +17,7 @@ def get_symbol_list_arr(db_result):
 def get_check_rule_results_all(arr_symbol_list, rule_no, start_date, end_date, check_date, b_specific_date):
     # for initialization
     b_first_stock = True
+    ruler = Rule()
 
     for idx, i_stock_no in enumerate(arr_symbol_list):
 
@@ -28,6 +29,7 @@ def get_check_rule_results_all(arr_symbol_list, rule_no, start_date, end_date, c
                 continue
 
             df_list = pd.DataFrame(db_result)
+            ruler.update_df(df_list)
 
             if b_first_stock == True:
                 # if it is the first stock, initialize an empty dataframe for concat the results
@@ -36,63 +38,8 @@ def get_check_rule_results_all(arr_symbol_list, rule_no, start_date, end_date, c
                 all_results['Symbol'] = []
                 b_first_stock = False
 
-            if rule_no == 0:
-                # rule 0: sma cross-up strategy, SMA10 cross up SMA20
-                results_df, b_flag = getSMACrossUp(df_list)
-            elif rule_no == 1:
-                # rule 1: sma cross-up strategy, SMA10 cross up SMA50
-                results_df, b_flag = getSMACrossUp(df_list, latter='SMA50')
-            elif rule_no == 2:
-                # rule 2: price cross-up sma strategy, Adj Close cross up SMA10
-                results_df, b_flag = getPriceCrossUp(df_list)
-            elif rule_no == 3:
-                # rule 3: price cross-up sma strategy, Adj Close cross up SMA20
-                results_df, b_flag = getPriceCrossUp(df_list, sma='SMA20')
-            elif rule_no == 4:
-                # rule 4: price cross-up sma strategy, Adj Close cross up SMA50
-                results_df, b_flag = getPriceCrossUp(df_list, sma='SMA50')
-            elif rule_no == 5:
-                # rule 5: RSI14 cross-up 30
-                results_df, b_flag = getRSIabove(df_list, th_rsi=30)
-            elif rule_no == 6:
-                # rule 6: MACD cross-up strategy
-                results_df, b_flag = macdCrossUp(df_list)
-            elif rule_no == 7:
-                # rule 7: Slow %K cross-up Slow %D strategy
-                results_df, b_flag = slowkCrossUp(df_list)
-            elif rule_no == 8:
-                # rule 8: price reach the BB Lowerband strategy
-                results_df, b_flag = getPriceBelowBBlowerband(df_list)
-            elif rule_no == 9:
-                # rule 9: sma10 > sma20
-                results_df, b_flag = smaAbove(df_list)
-            elif rule_no == 10:
-                #   rule 10: sma10 > sma50
-                results_df, b_flag = smaAbove(df_list, latter='SMA50')
-            elif rule_no == 11:
-                #   rule 11: sma20 > sma50
-                results_df, b_flag = smaAbove(df_list, former='SMA20', latter='SMA50')
-            elif rule_no == 12:
-                #   rule 12: adj close > sma10
-                results_df, b_flag = priceAboveSMA(df_list, sma='SMA10')
-            elif rule_no == 13:
-                #   rule 13: adj close > sma20
-                results_df, b_flag = priceAboveSMA(df_list, sma='SMA20')
-            elif rule_no == 14:
-                #   rule 14: adj close > sma50
-                results_df, b_flag = priceAboveSMA(df_list, sma='SMA50')
-            elif rule_no == 15:
-                #   rule 15: adj close > sma100
-                results_df, b_flag = priceAboveSMA(df_list, sma='SMA100')
-            elif rule_no == 16:
-                #   rule 16: rsi < 80
-                results_df, b_flag = rsiBelow(df_list, th_rsi=80)
-            elif rule_no == 17:
-                #   rule 17: macd hist > 0   (i.e. macd line > signal line)
-                results_df, b_flag = macdHistAbove0(df_list)
-            elif rule_no == 18:
-                #   rule 18: slow %k > slow %d
-                results_df, b_flag = slowkAboveSlowd(df_list)
+            results_df, b_flag = ruler.run_rule(rule_no)
+            
 
             results_df['Symbol'] = i_stock_no
             if b_specific_date == True:
@@ -121,64 +68,10 @@ def get_check_rule_results(stock_no, rule_no, start_date, end_date, check_date, 
     db_result = db_get_data_by_symbol(stock_no, start_date, end_date)
 
     df_list = pd.DataFrame(db_result)
+    ruler = Rule(df_list)
 
-    if rule_no == 0:
-        # rule 0: sma cross-up strategy, SMA10 cross up SMA20
-        results_df, b_flag = getSMACrossUp(df_list)
-    elif rule_no == 1:
-        # rule 1: sma cross-up strategy, SMA10 cross up SMA50
-        results_df, b_flag = getSMACrossUp(df_list, latter='SMA50')
-    elif rule_no == 2:
-        # rule 2: price cross-up sma strategy, Adj Close cross up SMA10
-        results_df, b_flag = getPriceCrossUp(df_list)
-    elif rule_no == 3:
-        # rule 3: price cross-up sma strategy, Adj Close cross up SMA20
-        results_df, b_flag = getPriceCrossUp(df_list, sma='SMA20')
-    elif rule_no == 4:
-        # rule 4: price cross-up sma strategy, Adj Close cross up SMA50
-        results_df, b_flag = getPriceCrossUp(df_list, sma='SMA50')
-    elif rule_no == 5:
-        # rule 5: RSI14 cross-up 30
-        results_df, b_flag = getRSIabove(df_list, th_rsi=30)
-    elif rule_no == 6:
-        # rule 6: MACD cross-up strategy
-        results_df, b_flag = macdCrossUp(df_list)
-    elif rule_no == 7:
-        # rule 7: Slow %K cross-up Slow %D strategy
-        results_df, b_flag = slowkCrossUp(df_list)
-    elif rule_no == 8:
-        # rule 8: price reach the BB Lowerband strategy
-        results_df, b_flag = getPriceBelowBBlowerband(df_list)
-    elif rule_no == 9:
-        # rule 9: sma10 > sma20
-        results_df, b_flag = smaAbove(df_list)
-    elif rule_no == 10:
-        #   rule 10: sma10 > sma50
-        results_df, b_flag = smaAbove(df_list, latter='SMA50')
-    elif rule_no == 11:
-        #   rule 11: sma20 > sma50
-        results_df, b_flag = smaAbove(df_list, former='SMA20', latter='SMA50')
-    elif rule_no == 12:
-        #   rule 12: adj close > sma10
-        results_df, b_flag = priceAboveSMA(df_list, sma='SMA10')
-    elif rule_no == 13:
-        #   rule 13: adj close > sma20
-        results_df, b_flag = priceAboveSMA(df_list, sma='SMA20')
-    elif rule_no == 14:
-        #   rule 14: adj close > sma50
-        results_df, b_flag = priceAboveSMA(df_list, sma='SMA50')
-    elif rule_no == 15:
-        #   rule 15: adj close > sma100
-        results_df, b_flag = priceAboveSMA(df_list, sma='SMA100')
-    elif rule_no == 16:
-        #   rule 16: rsi < 80
-        results_df, b_flag = rsiBelow(df_list, th_rsi=80)
-    elif rule_no == 17:
-        #   rule 17: macd hist > 0   (i.e. macd line > signal line)
-        results_df, b_flag = macdHistAbove0(df_list)
-    elif rule_no == 18:
-        #   rule 18: slow %k > slow %d
-        results_df, b_flag = slowkAboveSlowd(df_list)
+    results_df, b_flag = ruler.run_rule(rule_no)
+
 
     results_df['Symbol'] = stock_no
     if b_specific_date == True:
@@ -205,102 +98,16 @@ def get_stock_score(stock_no, start_date, end_date):
     # add a 'score' column
     df_list['Score'] = 0
 
-    # rule 0: sma cross-up strategy, SMA10 cross up SMA20
-    results_df, b_flag = getSMACrossUp(df_list)
-    # update the scores and the df_list
-    results_df['Score'] += 1
-    df_list.update(results_df)
+    ruler = Rule(df_list)
 
-    # rule 1: sma cross-up strategy, SMA10 cross up SMA50
-    results_df, b_flag = getSMACrossUp(df_list, latter='SMA50')
-    results_df['Score'] += 1
-    df_list.update(results_df)
+    for i in range(ruler.get_num_of_rules()):
+        print("Rule {}:".format(i))
+        results_df, b_flag = ruler.run_rule(i)
+        results_df['Score'] += 1
+        df_list.update(results_df)
+        ruler.update_df(df_list)
 
-    # rule 2: price cross-up sma strategy, Adj Close cross up SMA10
-    results_df, b_flag = getPriceCrossUp(df_list)
-    results_df['Score'] += 1
-    df_list.update(results_df)
-
-    # rule 3: price cross-up sma strategy, Adj Close cross up SMA20
-    results_df, b_flag = getPriceCrossUp(df_list, sma='SMA20')
-    results_df['Score'] += 1
-    df_list.update(results_df)
-
-    # rule 4: price cross-up sma strategy, Adj Close cross up SMA50
-    results_df, b_flag = getPriceCrossUp(df_list, sma='SMA50')
-    results_df['Score'] += 1
-    df_list.update(results_df)
-
-    # rule 5: RSI14 cross-up 30
-    results_df, b_flag = getRSIabove(df_list, th_rsi=30)
-    results_df['Score'] += 1
-    df_list.update(results_df)
-
-    # rule 6: MACD cross-up strategy
-    results_df, b_flag = macdCrossUp(df_list)
-    results_df['Score'] += 1
-    df_list.update(results_df)
-
-    # rule 7: Slow %K cross-up Slow %D strategy
-    results_df, b_flag = slowkCrossUp(df_list)
-    results_df['Score'] += 1
-    df_list.update(results_df)
-
-    # rule 8: price reach the BB Lowerband strategy
-    results_df, b_flag = getPriceBelowBBlowerband(df_list)
-    results_df['Score'] += 1
-    df_list.update(results_df)
-
-    # rule 9: sma10 > sma20
-    results_df, b_flag = smaAbove(df_list)
-    results_df['Score'] += 1
-    df_list.update(results_df)
-
-    # rule 10: sma10 > sma50
-    results_df, b_flag = smaAbove(df_list, latter='SMA50')
-    results_df['Score'] += 1
-    df_list.update(results_df)
-        
-    # rule 11: sma20 > sma50
-    results_df, b_flag = smaAbove(df_list, former='SMA20', latter='SMA50')
-    results_df['Score'] += 1
-    df_list.update(results_df)
-        
-    # rule 12: adj close > sma10
-    results_df, b_flag = priceAboveSMA(df_list, sma='SMA10')
-    results_df['Score'] += 1
-    df_list.update(results_df)
-        
-    # rule 13: adj close > sma20
-    results_df, b_flag = priceAboveSMA(df_list, sma='SMA20')
-    results_df['Score'] += 1
-    df_list.update(results_df)
-        
-    # rule 14: adj close > sma50
-    results_df, b_flag = priceAboveSMA(df_list, sma='SMA50')
-    results_df['Score'] += 1
-    df_list.update(results_df)
-        
-    # rule 15: adj close > sma100
-    results_df, b_flag = priceAboveSMA(df_list, sma='SMA100')
-    results_df['Score'] += 1
-    df_list.update(results_df)
-        
-    # rule 16: rsi < 80
-    results_df, b_flag = rsiBelow(df_list, th_rsi=80)
-    results_df['Score'] += 1
-    df_list.update(results_df)
-
-    # rule 17: macd hist > 0   (i.e. macd line > signal line)
-    results_df, b_flag = macdHistAbove0(df_list)
-    results_df['Score'] += 1
-    df_list.update(results_df)
-    
-    # rule 18: slow %k > slow %d
-    results_df, b_flag = slowkAboveSlowd(df_list)
-    results_df['Score'] += 1
-    df_list.update(results_df)
-
+    df_list = ruler.get_df()
     # rearrange the columns order 
     cols = df_list.columns.tolist()
     cols = cols[-2:] + cols[:-2]
@@ -331,67 +138,13 @@ def check_multiple_rules(stock_no, start_date, end_date, arr_rule_no):
     # for initialization
     b_first_rule = True
 
+    ruler = Rule(df_list)
+
     for i_rule_no in arr_rule_no:
         # print(i_rule_no)
         rule_no = int(i_rule_no)
 
-        if rule_no == 0:
-            # rule 0: sma cross-up strategy, SMA10 cross up SMA20
-            results_df, b_flag = getSMACrossUp(df_list)
-        elif rule_no == 1:
-            # rule 1: sma cross-up strategy, SMA10 cross up SMA50
-            results_df, b_flag = getSMACrossUp(df_list, latter='SMA50')
-        elif rule_no == 2:
-            # rule 2: price cross-up sma strategy, Adj Close cross up SMA10
-            results_df, b_flag = getPriceCrossUp(df_list)
-        elif rule_no == 3:
-            # rule 3: price cross-up sma strategy, Adj Close cross up SMA20
-            results_df, b_flag = getPriceCrossUp(df_list, sma='SMA20')
-        elif rule_no == 4:
-            # rule 4: price cross-up sma strategy, Adj Close cross up SMA50
-            results_df, b_flag = getPriceCrossUp(df_list, sma='SMA50')
-        elif rule_no == 5:
-            # rule 5: RSI14 cross-up 30
-            results_df, b_flag = getRSIabove(df_list, th_rsi=30)
-        elif rule_no == 6:
-            # rule 6: MACD cross-up strategy
-            results_df, b_flag = macdCrossUp(df_list)
-        elif rule_no == 7:
-            # rule 7: Slow %K cross-up Slow %D strategy
-            results_df, b_flag = slowkCrossUp(df_list)
-        elif rule_no == 8:
-            # rule 8: price reach the BB Lowerband strategy
-            results_df, b_flag = getPriceBelowBBlowerband(df_list)
-        elif rule_no == 9:
-            # rule 9: sma10 > sma20
-            results_df, b_flag = smaAbove(df_list)
-        elif rule_no == 10:
-            #   rule 10: sma10 > sma50
-            results_df, b_flag = smaAbove(df_list, latter='SMA50')
-        elif rule_no == 11:
-            #   rule 11: sma20 > sma50
-            results_df, b_flag = smaAbove(df_list, former='SMA20', latter='SMA50')
-        elif rule_no == 12:
-            #   rule 12: adj close > sma10
-            results_df, b_flag = priceAboveSMA(df_list, sma='SMA10')
-        elif rule_no == 13:
-            #   rule 13: adj close > sma20
-            results_df, b_flag = priceAboveSMA(df_list, sma='SMA20')
-        elif rule_no == 14:
-            #   rule 14: adj close > sma50
-            results_df, b_flag = priceAboveSMA(df_list, sma='SMA50')
-        elif rule_no == 15:
-            #   rule 15: adj close > sma100
-            results_df, b_flag = priceAboveSMA(df_list, sma='SMA100')
-        elif rule_no == 16:
-            #   rule 16: rsi < 80
-            results_df, b_flag = rsiBelow(df_list, th_rsi=80)
-        elif rule_no == 17:
-            #   rule 17: macd hist > 0   (i.e. macd line > signal line)
-            results_df, b_flag = macdHistAbove0(df_list)
-        elif rule_no == 18:
-            #   rule 18: slow %k > slow %d
-            results_df, b_flag = slowkAboveSlowd(df_list)
+        results_df, b_flag = ruler.run_rule(rule_no)
 
         if b_first_rule == True:
             results_df['Symbol'] = stock_no
@@ -400,7 +153,10 @@ def check_multiple_rules(stock_no, start_date, end_date, arr_rule_no):
         df_list = results_df.copy()
         if df_list.empty == True:
             break
+        else:
+            ruler.update_df(df_list)
 
+    df_list = ruler.get_df()
     # rearrange the columns order 
     cols = df_list.columns.tolist()
     cols = cols[-1:] + cols[:-1]
