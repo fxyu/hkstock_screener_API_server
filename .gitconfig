@@ -5,4 +5,4 @@
 	editor = \"C:\\Users\\catlab-home\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe\" --wait
 
 [credential]
-	helper = "!f() { /home/dev/.vscode-server/bin/ae08d5460b5a45169385ff3fd44208f431992451/node /tmp/vscode-remote-containers-034dac19e13cf4df5418f2cd6a1b36e8d149eeeb.js $*; }; f"
+	helper = "!f() { /home/dev/.vscode-server/bin/c47d83b293181d9be64f27ff093689e8e7aed054/node /tmp/vscode-remote-containers-42edeaf519a6d94900e5f46277f9cbdb8848327d.js $*; }; f"

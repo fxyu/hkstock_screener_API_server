@@ -51,7 +51,14 @@ def api_check_rule_all(request, rule_no, start_date, end_date):
     try:
         # Get the symbol list from database
         db_result = db_get_all_symbol()
-        js_results = get_check_rule_results_all(get_symbol_list_arr(db_result), rule_no, start_date, end_date, 0, False)
+        sorted_list = get_symbol_list_arr(db_result)
+        js_results = get_check_rule_results_all(
+                        sorted_list, 
+                        rule_no, 
+                        start_date, 
+                        end_date, 
+                        0, 
+                        False)
 
         if request.method == "GET":
             return Response(js_results)
