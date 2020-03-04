@@ -141,3 +141,28 @@ def api_check_multiple_rules(request, stock_no, start_date, end_date, rule_no):
         print("Unexpected error:", sys.exc_info()[0])
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+
+@api_view(['GET',])
+def api_get_triggered_symbol(request, stock_no, start_date, end_date):
+    try:
+        df_list = db_get_triggered(stock_no,start_date,end_date)
+
+        if request.method == "GET":
+            return Response(df_list)
+
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+
+@api_view(['GET',])
+def api_get_triggered_all(request, start_date, end_date):
+    try:
+        df_list = db_get_triggered(None, start_date,end_date)
+        if request.method == "GET":
+            return Response(df_list)
+
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        return Response(status=status.HTTP_404_NOT_FOUND)

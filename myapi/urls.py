@@ -1,6 +1,14 @@
 from django.urls import path
 
-from myapi.views import api_stock_data_all, api_get_all_symbol, api_check_rule_all, api_check_rule, api_check_rule_on_date_all, api_check_rule_on_date, api_get_stock_score
+from myapi.views import (api_stock_data_all,
+                         api_get_all_symbol,
+                         api_check_rule_all,
+                         api_check_rule,
+                         api_check_rule_on_date_all,
+                         api_check_rule_on_date,
+                         api_get_stock_score,
+                         api_get_triggered_symbol,
+                         api_get_triggered_all)
 
 from myapi.views import api_check_multiple_rules
 
@@ -11,7 +19,7 @@ urlpatterns = [
     # stock_no, start_date, end_date
     # api/stock/<stock_no>/<start_date>/<end_date>/
 
-    # currently, we have 8 rules for demo, 
+    # currently, we have 8 rules for demo,
     #   rule 0: sma10 cross-up sma20
     #   rule 1: sma10 cross-up sma50
     #   rule 2: Adj Close cross up SMA10
@@ -34,31 +42,39 @@ urlpatterns = [
     #   rule 16:    rsi < 80
     #   rule 17:    macd hist > 0   (i.e. macd line > signal line)
     #   rule 18:    slow %k > slow %d
-    
+
     # get data of <stock_no> from <start_date> to <end_date> from the database
-    path('<str:stock_no>/<str:start_date>/<str:end_date>/', api_stock_data_all, name='stock_data_all'),
+    path('stock/<str:stock_no>/<str:start_date>/<str:end_date>/',
+         api_stock_data_all, name='stock_data_all'),
 
     # get all the stock symbols from the database
     path('symbol/', api_get_all_symbol, name='get_all_symbol'),
 
     # get stocks which fulfill rule <rule_no> within the date range <start_date> to <end_date>
-    path('<str:start_date>/<str:end_date>/rule/<int:rule_no>/', api_check_rule_all, name='check_rule_all'),
+    # path('<str:start_date>/<str:end_date>/rule/<int:rule_no>/', api_check_rule_all, name='check_rule_all'),
 
     # get the date of fulfillment for <stock_no> fulfill rule <rule_no> during <start_date> to <end_date>
-    path('<str:stock_no>/<str:start_date>/<str:end_date>/rule/<int:rule_no>/', api_check_rule, name='check_rule'),
+    # path('<str:stock_no>/<str:start_date>/<str:end_date>/rule/<int:rule_no>/', api_check_rule, name='check_rule'),
 
     # get stocks which fulfill rule <rule_no> on a particular <check_date>
-    path('<str:check_date>/rule/<int:rule_no>/on_date/', api_check_rule_on_date_all, name='check_rule_on_date_all'),
+    # path('<str:check_date>/rule/<int:rule_no>/on_date/', api_check_rule_on_date_all, name='check_rule_on_date_all'),
 
     # get whether <stock_no> fulfills rule <rule_no> on a particular <check_date>
-    path('<str:stock_no>/<str:check_date>/rule/<int:rule_no>/on_date/', api_check_rule_on_date, name='check_rule_on_date'),
+    # path('<str:stock_no>/<str:check_date>/rule/<int:rule_no>/on_date/', api_check_rule_on_date, name='check_rule_on_date'),
 
     # get scores of <stock_no> of each day from <start_date> to <end_date>
     # As currenlty we have 19 rules, max. score is 18.0, score ranges from 0.0 to 19.0
-    path('<str:stock_no>/<str:start_date>/<str:end_date>/score/', api_get_stock_score, name='get_stock_score'),
+    # path('<str:stock_no>/<str:start_date>/<str:end_date>/score/', api_get_stock_score, name='get_stock_score'),
 
-    # check multiple rules 
+    # check multiple rules
     # multiple rule no should be in the format of "1-2-3-4-6-8", i.e. checking rules 1,2,3,4,6,8
-    path('check/<str:stock_no>/<str:start_date>/<str:end_date>/<str:rule_no>/', api_check_multiple_rules, name='check_multiple_rules'),
+    # path('check/<str:stock_no>/<str:start_date>/<str:end_date>/<str:rule_no>/', api_check_multiple_rules, name='check_multiple_rules'),
 
+    # check stocks which fulfill any rules within the date range <start_date> to <end_date>
+    path('check_rule/<str:stock_no>/<str:start_date>/<str:end_date>/',
+         api_get_triggered_symbol, name='get_triggered_symbol'),
+
+    # # get all stocks which fulfill any rules within the date range <start_date> to <end_date>
+    path('check_rule_all/<str:start_date>/<str:end_date>/', api_get_triggered_all, name='get_triggered_all')
+    
 ]
