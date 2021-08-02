@@ -1,0 +1,1 @@
+HOST = 'mylink.com:6017'
